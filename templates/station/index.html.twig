@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Station index{% endblock %}
+
+{% block body %}
+    <h1>Station index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Lon</th>
+                <th>Lat</th>
+                <th>Station_id</th>
+                <th>Current_dockCount</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for station in stations %}
+            <tr>
+                <td>{{ station.id }}</td>
+                <td>{{ station.name }}</td>
+                <td>{{ station.lon }}</td>
+                <td>{{ station.lat }}</td>
+                <td>{{ station.stationId }}</td>
+                <td>{{ station.currentDockCount }}</td>
+                <td>
+                    <a href="{{ path('station_show', {'id': station.id}) }}">show</a>
+                    <a href="{{ path('station_edit', {'id': station.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('station_new') }}">Create new</a>
+{% endblock %}
