@@ -47,6 +47,11 @@ class Trip
      */
     private $to_station_id;
 
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $trip_time;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +125,18 @@ class Trip
     public function setToStationId(?Station $to_station_id): self
     {
         $this->to_station_id = $to_station_id;
+
+        return $this;
+    }
+
+    public function getTripTime(): ?\DateTimeInterface
+    {
+        return $this->trip_time;
+    }
+
+    public function setTripTime(?\DateTimeInterface $trip_time): self
+    {
+        $this->trip_time = $trip_time;
 
         return $this;
     }

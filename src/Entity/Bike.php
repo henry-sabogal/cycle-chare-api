@@ -34,6 +34,11 @@ class Bike
      */
     private $trips;
 
+    /**
+     * @ORM\Column(type="string", length=8, nullable=true)
+     */
+    private $name;
+
     public function __construct()
     {
         $this->trips = new ArrayCollection();
@@ -94,6 +99,18 @@ class Bike
                 $trip->setBike(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

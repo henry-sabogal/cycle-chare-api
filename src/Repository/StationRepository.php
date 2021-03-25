@@ -26,13 +26,12 @@ class StationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findById($id){
+    public function findOneById($id){
         return $this->createQueryBuilder('s')
-            ->select('s.id, s.name, s.lon, s.lat, s.current_dockCount')
             ->andWhere('s.id = :val')
             ->setParameter('val', $id)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 
     // /**

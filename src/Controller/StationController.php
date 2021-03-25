@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Station;
+use App\Entity\Bike;
 use App\Form\StationType;
 use App\Repository\StationRepository;
+use App\Repository\BikeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,71 +26,27 @@ class StationController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="station_new", methods={"GET","POST"})
-     */
-    public function new(Request $request): Response
-    {
-        $station = new Station();
-        $form = $this->createForm(StationType::class, $station);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($station);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('station_index');
-        }
-
-        return $this->render('station/new.html.twig', [
-            'station' => $station,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
      * @Route("/{id}", name="station_show", methods={"GET"})
      */
     public function show(int $id): Response
     {
         $station = $this->getDoctrine()
             ->getRepository(Station::class)
-            ->findById($id);
+            ->findOneById($id);
 
-        return $this->json($station);
-    }
+        $bikes = $this->getDoctrine()
+            ->getRepository(Bike::class)
+            ->findByStation($station);
 
-    /**
-     * @Route("/{id}/edit", name="station_edit", methods={"GET","POST"})
-     */
-    public function edit(Request $request, Station $station): Response
-    {
-        $form = $this->createForm(StationType::class, $station);
-        $form->handleRequest($request);
+        $data = array(
+            'id' => $station->getId(),
+            'name' => $station->getName(),
+            'lon' => $station->getLon(),
+            'lat' => $station->getLat(),
+            'current_dockCount' => $station->getCurrentDockCount(),
+            'bikes' => $bikes
+        );
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('station_index');
-        }
-
-        return $this->render('station/edit.html.twig', [
-            'station' => $station,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="station_delete", methods={"DELETE"})
-     */
-    public function delete(Request $request, Station $station): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$station->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($station);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('station_index');
+        return $this->json($data);
     }
 }

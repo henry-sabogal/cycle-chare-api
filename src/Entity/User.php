@@ -39,6 +39,16 @@ class User
      */
     private $trips;
 
+    /**
+     * @ORM\Column(type="string", length=8, nullable=true)
+     */
+    private $id_gmail;
+
+    /**
+     * @ORM\Column(type="string", length=60, nullable=true)
+     */
+    private $displayName;
+
     public function __construct()
     {
         $this->trips = new ArrayCollection();
@@ -111,6 +121,30 @@ class User
                 $trip->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIdGmail(): ?string
+    {
+        return $this->id_gmail;
+    }
+
+    public function setIdGmail(?string $id_gmail): self
+    {
+        $this->id_gmail = $id_gmail;
+
+        return $this;
+    }
+
+    public function getDisplayName(): ?string
+    {
+        return $this->displayName;
+    }
+
+    public function setDisplayName(?string $displayName): self
+    {
+        $this->displayName = $displayName;
 
         return $this;
     }
