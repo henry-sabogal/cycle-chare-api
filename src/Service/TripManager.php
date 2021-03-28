@@ -48,6 +48,9 @@ class TripManager extends AppManager {
         $trip->setToStationId($this->toStation);
         $trip->setTripTime($this->time);
 
+        $this->fromStation->setCurrentDockCount($this->fromStation->getCurrentDockCount() - 1);
+        $this->toStation->setCurrentDockCount($this->toStation->getCurrentDockCount() + 1);
+
         $this->entityManager->persist($trip);
         $this->entityManager->flush();
 
