@@ -19,6 +19,21 @@ class TripRepository extends ServiceEntityRepository
         parent::__construct($registry, Trip::class);
     }
 
+    public function findByUser($user){
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.bike', 'b')
+            ->addSelect('b')
+            ->leftJoin('t.from_station_id', 'fs')
+            ->addSelect('fs')
+            ->leftJoin('t.to_station_id', 'ts')
+            ->addSelect('ts')
+            ->select('t.id, t.state, t.trip_date, t.trip_time, b.name as bike, fs.name as from_station, ts.name as to_station')
+            ->andWhere('t.user = :val')
+            ->setParameter('val', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Trip[] Returns an array of Trip objects
     //  */

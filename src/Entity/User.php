@@ -40,7 +40,7 @@ class User
     private $trips;
 
     /**
-     * @ORM\Column(type="string", length=8, nullable=true)
+     * @ORM\Column(type="string", length=60, nullable=true)
      */
     private $id_gmail;
 

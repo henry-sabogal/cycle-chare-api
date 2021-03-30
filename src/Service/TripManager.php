@@ -6,14 +6,14 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
 use App\Entity\Trip;
-use App\Repository\TripRepository;
 use App\Repository\BikeRepository;
+use App\Repository\StationRepository;
 use App\Service\AppManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class TripManager extends AppManager {
 
-    private $tripRepository;
+    private $stationRepository;
     private $bikeRepository;
 
     private $fromStation;
@@ -22,15 +22,15 @@ class TripManager extends AppManager {
     private $bike;
     private $date;
     private $time;
-    private $state = 'booked';
+    private $state = 'Booked';
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        TripRepository $tripRepository,
+        StationRepository $stationRepository,
         BikeRepository $bikeRepository){
         
         parent::__construct($entityManager);
-        $this->tripRepository = $tripRepository;
+        $this->stationRepository = $stationRepository;
         $this->bikeRepository = $bikeRepository;
     }
 
@@ -50,6 +50,9 @@ class TripManager extends AppManager {
 
         $this->fromStation->setCurrentDockCount($this->fromStation->getCurrentDockCount() - 1);
         $this->toStation->setCurrentDockCount($this->toStation->getCurrentDockCount() + 1);
+        
+        $this->bike->setStation($this->toStation);
+        $this->bike->setState($this->state);
 
         $this->entityManager->persist($trip);
         $this->entityManager->flush();
@@ -57,34 +60,34 @@ class TripManager extends AppManager {
         return $trip;
     }
 
-    public function setData(Request $request, User $user){
+    public function setData($content, User $user){
         $this->user = $user;
-        $this->fromStation = $this->fetchStation($request->request->get('fromStation', ''));
-
+        $this->fromStation = $this->fetchStation($content->{'fromStation'});
+        
         if(!$this->fromStation){
             return null;
         }
 
-        $this->toStation = $this->fetchStation($request->request->get('toStation', ''));
+        $this->toStation = $this->fetchStation($content->{'toStation'});
 
         if(!$this->toStation){
             return null;
         }
 
-        $this->bike = $this->fetchBike($request->request->get('bike', ''));
+        $this->bike = $this->fetchBike($content->{'bike'});
 
         if(!$this->bike){
             return null;
         }
 
-        $this->date = \DateTime::createFromFormat('Y-m-d', $request->request->get('date', ''));
-        $this->time = \DateTime::createFromFormat('H:i:s', $request->request->get('time', ''));
+        $this->date = \DateTime::createFromFormat('Y-m-d', $content->{'date'});
+        $this->time = \DateTime::createFromFormat('H:i:s', $content->{'time'});
 
         return $this->persist();
     }
 
     private function fetchStation($id){
-        return $this->tripRepository->find($id);
+        return $this->stationRepository->find($id);
     }
 
     private function fetchBike($id){

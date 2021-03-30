@@ -48,12 +48,12 @@ class UserManager extends AppManager{
         return $user;
     }
 
-    public function setData(Request $request): User{
-        $this->email = $request->request->get('email', '');
-        $this->name = $request->request->get('name', '');
-        $this->surname = $request->request->get('surname', '');
-        $this->id_gmail = $request->request->get('id_gmail', '');
-        $this->displayName = $request->request->get('displayName', '');
+    public function setData($content): User{
+        $this->email = $content->{'email'} != NULL? $content->{'email'}: '';
+        $this->name = $content->{'name'} != NULL? $content->{'name'}: '';
+        $this->surname = $content->{'surname'} != NULL? $content->{'surname'}: '';
+        $this->id_gmail = $content->{'id_gmail'} != NULL? $content->{'id_gmail'}: '';
+        $this->displayName = $content->{'displayName'} != NULL? $content->{'displayName'}: '';
 
         return $this->fetch();
     }
